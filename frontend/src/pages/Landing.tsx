@@ -62,8 +62,8 @@ export default function Landing() {
       <header className="row" style={{ maxWidth: 1180, margin: '0 auto', padding: '18px 24px' }}>
         <Link to="/" className="brand" style={{ padding: 0 }}><Logo /><b>DATA SENTINEL</b></Link>
         <nav className="row right" style={{ gap: 6 }}>
-          <a className="btn ghost sm" href="#how">How it works</a>
-          <a className="btn ghost sm" href="#evidence">Evidence</a>
+          <a className="btn ghost sm hide-sm" href="#how">How it works</a>
+          <a className="btn ghost sm hide-sm" href="#evidence">Evidence</a>
           {me && <Link className="btn primary sm" to="/app">Open workspace</Link>}
         </nav>
       </header>
