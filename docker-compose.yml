@@ -1,0 +1,24 @@
+# Local production-like stack: app + Postgres.  docker compose up --build  ->  http://localhost:8000
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: sentinel
+      POSTGRES_PASSWORD: sentinel-local-only
+      POSTGRES_DB: sentinel
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentinel"]
+      interval: 5s
+      retries: 10
+  app:
+    build: .
+    ports: ["8000:8000"]
+    environment:
+      DATABASE_URL: postgresql://sentinel:sentinel-local-only@db:5432/sentinel
+      SECRET_KEY: ${SECRET_KEY:-change-me-local-only-secret-key-0123456789}
+      COOKIE_SECURE: "false"
+    depends_on:
+      db: {condition: service_healthy}
+volumes:
+  pgdata:

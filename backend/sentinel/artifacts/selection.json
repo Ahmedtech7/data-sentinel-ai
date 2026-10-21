@@ -1,0 +1,10 @@
+{
+ "row": {
+  "detector": "residual_z_calibrated",
+  "threshold": 2.2137179405725966
+ },
+ "period": {
+  "detector": "robust_z_learned",
+  "threshold": 4.454045618405411
+ }
+}

@@ -1,0 +1,15 @@
+# Render Blueprint: one free Docker web service. Database: Neon free Postgres (set DATABASE_URL).
+services:
+  - type: web
+    name: data-sentinel
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false   # paste the Neon connection string in the dashboard
+      - key: DEMO_MAX_WORKSPACES
+        value: "40"

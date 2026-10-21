@@ -1,0 +1,28 @@
+// node screenshots.mjs  -> docs/screenshots/*.png (needs a running server with a fresh rate limit)
+import { chromium } from '@playwright/test'
+const base = process.env.BASE_URL ?? 'http://localhost:8765'
+const out = '../docs/screenshots'
+const browser = await chromium.launch()
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2, colorScheme: process.env.SCHEME ?? 'light' })
+const shot = async (name, opts = {}) => { await page.mouse.move(1430, 890); await page.waitForTimeout(200); return page.screenshot({ path: `${out}/${name}.png`, ...opts }) }
+await page.goto(base); await page.waitForTimeout(800); await shot('landing')
+await page.getByRole('button', { name: 'Open a live demo workspace' }).click()
+await page.getByText('web · EMEA: volume drop on 2 days').waitFor({ timeout: 120000 })
+await page.waitForTimeout(500); await shot('overview')
+await page.getByRole('link', { name: /^Incidents/ }).click()
+await page.getByRole('link', { name: /unusual `unit_price` values/ }).click()
+await page.getByText(/Baseline evidence/).first().waitFor(); await shot('incident')
+await page.getByRole('link', { name: 'Datasets' }).click()
+await page.getByRole('link', { name: /Meridian/ }).click()
+await page.getByRole('tab', { name: 'Feed health' }).click(); await page.waitForTimeout(800)
+await page.evaluate(() => window.scrollTo(0, 360)); await shot('feed-health')
+await page.getByRole('tab', { name: 'Records' }).click(); await page.waitForTimeout(800)
+await page.evaluate(() => window.scrollTo(0, 360)); await shot('records')
+await page.getByRole('link', { name: 'Fault Lab' }).click()
+await page.getByRole('button', { name: 'Pipeline outage' }).click()
+await page.getByRole('button', { name: 'Unit conversion bug' }).click()
+await page.getByRole('button', { name: /Inject 2 faults/ }).click()
+await page.getByRole('row', { name: /unit error/ }).waitFor({ timeout: 120000 }); await page.waitForTimeout(500); await shot('fault-lab')
+await page.getByRole('link', { name: 'Model evidence' }).click(); await page.waitForTimeout(1200)
+await page.evaluate(() => window.scrollTo(0, 480)); await shot('model-evidence')
+await browser.close()
