@@ -4,6 +4,8 @@
 
 **Find broken, missing, duplicated and unusual business data before it reaches a decision, and see the evidence for every alert.**
 
+**[Open the live app →](https://data-sentinel-ai.vercel.app)**
+
 [![CI](https://github.com/Ahmedtech7/data-sentinel-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/Ahmedtech7/data-sentinel-ai/actions/workflows/ci.yml)
 ![Python 3.13](https://img.shields.io/badge/python-3.13-blue) ![React 19](https://img.shields.io/badge/react-19-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
