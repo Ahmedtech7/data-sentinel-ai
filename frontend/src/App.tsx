@@ -67,7 +67,6 @@ function Shell() {
           ))}
         </nav>
         <div className="side-foot">
-          {me.organization.is_demo && <span className="pill accent" title="This workspace is temporary and is deleted after 24 hours">Demo workspace · expires in 24 h</span>}
           <div className="small">
             <div className="ellipsis"><b>{me.name}</b></div>
             <div className="muted ellipsis">{me.organization.name} · {me.role}</div>

@@ -101,7 +101,7 @@ def members(user: User = Depends(current_user), db: Session = Depends(get_db)):
 @router.post("/members")
 def add_member(body: Member, user: User = Depends(require("admin")), db: Session = Depends(get_db)):
     if user.org.is_demo:
-        raise HTTPException(403, "Demo workspaces cannot add members.")
+        raise HTTPException(403, "This workspace cannot add members.")
     if db.scalar(select(User).where(User.email == body.email.lower())):
         raise HTTPException(409, "An account with this email already exists.")
     m = User(org_id=user.org_id, email=body.email.lower(), name=body.name.strip(),

@@ -150,7 +150,7 @@ export function FileDrop({ file, onFile }: { file: File | null; onFile: (f: File
       {file ? (
         <div><b>{file.name}</b> <span className="muted">· {fmt.bytes(file.size)}</span><div className="small muted">Click to choose a different file</div></div>
       ) : (
-        <div><b>Drop a CSV here</b> or click to browse<div className="small muted">UTF-8, header row, up to 15 MB</div></div>
+        <div><b>Drop a CSV here</b> or click to browse<div className="small muted">UTF-8 CSV with a header row</div></div>
       )}
     </div>
   )

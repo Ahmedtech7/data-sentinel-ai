@@ -9,7 +9,7 @@ export default defineConfig({
   reporter: [['list'], ['html', { open: 'never' }]],
   use: { baseURL: process.env.BASE_URL ?? 'http://localhost:8765', trace: 'retain-on-failure', screenshot: 'only-on-failure' },
   projects: [
-    // One demo workspace per run: the endpoint is rate-limited per IP.
+    // One workspace per run: the endpoint is rate-limited per IP.
     { name: 'demo-setup', testMatch: /demo\.setup\.ts/ },
     { name: 'e2e', testMatch: /\.spec\.ts/, dependencies: ['demo-setup'] },
   ],

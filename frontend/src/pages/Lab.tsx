@@ -107,7 +107,7 @@ export default function Lab() {
     <div className="stack" style={{ gap: 20 }}>
       <div className="page-head"><div className="grow"><h1>Fault Lab</h1>
         <p className="lede">Break a copy of your latest version on purpose, with a recorded seed, and see exactly what Data Sentinel catches and what it misses. Every experiment becomes a real version and goes through the same analysis as an upload.</p></div></div>
-      {!datasets.data.length ? <div className="card"><Empty title="No datasets yet">Upload a dataset first, or open a demo workspace from the home page.</Empty></div> : (
+      {!datasets.data.length ? <div className="card"><Empty title="No datasets yet">Upload a dataset on the Datasets page first.</Empty></div> : (
         <div className="split">
           <div className="stack" style={{ minWidth: 0 }}>
             {latest && (

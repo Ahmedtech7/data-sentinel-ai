@@ -8,7 +8,7 @@ test('landing page shows measured model results and offers only the demo entry',
   await expect(page.getByText(/false flags on [\d,]+ clean rows/)).toBeVisible()
 })
 
-test.describe('in the demo workspace', () => {
+test.describe('in a workspace', () => {
 test.use({ storageState: '.auth/demo.json' })
 
 test('incidents open with evidence and an analyst can triage them', async ({ page }) => {

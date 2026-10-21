@@ -6,7 +6,7 @@ const browser = await chromium.launch()
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2, colorScheme: process.env.SCHEME ?? 'light' })
 const shot = async (name, opts = {}) => { await page.mouse.move(1430, 890); await page.waitForTimeout(200); return page.screenshot({ path: `${out}/${name}.png`, ...opts }) }
 await page.goto(base); await page.waitForTimeout(800); await shot('landing')
-await page.getByRole('button', { name: 'Open a live demo workspace' }).click()
+await page.getByRole('button', { name: 'Open your workspace' }).click()
 await page.getByText('web · EMEA: volume drop on 2 days').waitFor({ timeout: 120000 })
 await page.waitForTimeout(500); await shot('overview')
 await page.getByRole('link', { name: /^Incidents/ }).click()

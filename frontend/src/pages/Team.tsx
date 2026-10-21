@@ -41,7 +41,7 @@ export default function Team() {
         <div className="card pad stack">
           <h3>Roles</h3>
           {(Object.keys(ROLE_HELP) as Role[]).map((r) => <div key={r} className="small"><b>{r}</b> · <span className="ink2">{ROLE_HELP[r]}</span></div>)}
-          <p className="small muted">Workspaces are private and temporary; there is no sign-in or sign-up.</p>
+          <p className="small muted">Your workspace is private to this browser and is kept for 24 hours.</p>
           {error && <div className="error">{error}</div>}
         </div>
       </div>

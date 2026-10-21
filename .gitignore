@@ -12,3 +12,8 @@ e2e/playwright-report/
 .env.*
 .DS_Store
 .auth/
+.vercel
+.env*
+.agents/
+.claude/
+skills-lock.json

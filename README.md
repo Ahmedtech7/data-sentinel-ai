@@ -38,7 +38,7 @@ It is built to be honest about what it knows. Anomalous is not the same as wrong
 | **Incidents** | One incident per root cause. Recurrences in later versions are added to the open incident; segment-level symptoms of a record-level cause are folded into it. Status, severity, assignee, comments, timeline. |
 | **Fault Lab** | Corrupt a copy of your latest version on purpose (outage, unit bug, replayed load, late feed, silent drift, schema change), with a recorded seed, and get a scorecard of what was caught, by which layer, and what was missed. |
 | **Model evidence** | The full offline evaluation in the app: every candidate detector, PR curves, recall per fault type, thresholds, runtime. |
-| **Demo workspaces** | One click creates a private, temporary workspace (deleted after 24 h) with a synthetic retailer and a month containing four realistic incidents. There is no sign-in or sign-up; this is the only way in. |
+| **Instant workspaces** | One click creates a private workspace (kept for 24 h) with a synthetic retailer and a month containing four realistic incidents. There is no sign-in or sign-up; this is the only way in. |
 | **Isolation & roles** | Every workspace is a separate tenant; `viewer` / `analyst` / `admin` roles are enforced server-side. |
 
 <table>
@@ -137,7 +137,7 @@ python3 -m venv .venv && .venv/bin/pip install -r backend/requirements-dev.txt
 cd backend && ../.venv/bin/uvicorn sentinel.main:app --port 8765
 ```
 
-Open http://localhost:8765 and click **Open a live demo workspace** (the only way in). Migrations run on startup; SQLite is used unless `DATABASE_URL` is set. For frontend development with hot reload, also run `cd frontend && npm run dev` (it proxies `/api` to port 8765).
+Open http://localhost:8765 and click **Open your workspace** (the only way in). Migrations run on startup; SQLite is used unless `DATABASE_URL` is set. For frontend development with hot reload, also run `cd frontend && npm run dev` (it proxies `/api` to port 8765).
 
 With Docker (app + Postgres):
 
@@ -150,7 +150,7 @@ docker compose up --build
 | `DATABASE_URL` | SQLite file in `backend/data/` | `postgresql://…` in production |
 | `SECRET_KEY` | random per process (dev only) | JWT signing; **required** when `SENTINEL_ENV=production` |
 | `MAX_UPLOAD_MB` / `MAX_ROWS` | 15 / 250000 | upload limits |
-| `DEMO_ENABLED` / `DEMO_MAX_WORKSPACES` / `DEMO_TTL_HOURS` | true / 40 / 24 | public demo controls |
+| `DEMO_ENABLED` / `DEMO_MAX_WORKSPACES` / `DEMO_TTL_HOURS` | true / 40 / 24 | instant-workspace controls |
 
 ## Tests
 
@@ -160,7 +160,7 @@ cd e2e && npm ci && npx playwright install chromium && npx playwright test      
 BASE_URL=https://<deployment> npx playwright test                                      # browser E2E, live
 ```
 
-CI (`.github/workflows/ci.yml`) runs lint, the test suite on **both SQLite and PostgreSQL**, a type-checked frontend build, and a Docker build that boots the container and creates a demo workspace through the API.
+CI (`.github/workflows/ci.yml`) runs lint, the test suite on **both SQLite and PostgreSQL**, a type-checked frontend build, and a Docker build that boots the container and creates a workspace through the API.
 
 ## Deployment
 
@@ -184,7 +184,7 @@ Step by step: [docs/deployment.md](docs/deployment.md).
 - Authorization: every query is scoped to the caller's organization. Cross-tenant ids return 404 (no existence leak). Roles are checked server-side.
 - Uploads: size cap before parsing, binary/encoding rejection, row and column caps, header sanitisation. Stored gzip-compressed in the database, never on a public path. Formula rules use a whitelist AST parser.
 - Headers: CSP (`script-src 'self'`), `X-Frame-Options: DENY`, `nosniff`, strict referrer.
-- Abuse limits: demo workspaces 5/hour/IP, a global cap, and a 24 h TTL.
+- Abuse limits: new workspaces 5/hour/IP, a global cap, and a 24 h TTL.
 - The web app has no sign-in or sign-up. The API still has password-based `register`/`login` endpoints (rate-limited 10/min/IP) for programmatic clients and tests.
 - Model artifacts are pickled with joblib and only ever loaded from blobs the service wrote itself.
 - No secrets in the repository; `SECRET_KEY` is required in production.
@@ -196,7 +196,7 @@ Step by step: [docs/deployment.md](docs/deployment.md).
 - **Small segments**: see volume-drop recall by size above.
 - **Late arrival** in feeds that already arrive in nightly batches is detected only 70% of the time.
 - **Batch, not streaming**: versions are uploaded as CSV. Database/warehouse connectors and scheduled pulls are natural next steps, along with email/Slack alerts and real accounts (with SSO) if it is run for a team.
-- **Free hosting**: cold starts of about a minute after 15 minutes idle, and 0.1 CPU makes baseline training several times slower than the ~2 s measured for 20k rows on a laptop (demo workspaces reuse a cached model).
+- **Free hosting**: cold starts of about a minute after 15 minutes idle, and 0.1 CPU makes baseline training several times slower than the ~2 s measured for 20k rows on a laptop (new workspaces reuse a cached model).
 
 ## Project layout
 
@@ -215,4 +215,4 @@ docs/                architecture · model card · deployment · screenshots
 
 ## License
 
-MIT. All demo data is synthetic and generated by `engine/generator.py`; no real company or person is represented.
+MIT. All sample data is synthetic and generated by `engine/generator.py`; no real company or person is represented.

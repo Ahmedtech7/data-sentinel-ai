@@ -1,0 +1,9 @@
+.venv
+**/node_modules
+frontend/dist
+backend/data
+e2e/.auth
+e2e/test-results
+e2e/playwright-report
+docs/screenshots
+**/__pycache__

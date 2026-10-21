@@ -80,14 +80,14 @@ export default function Landing() {
           </p>
           <div className="row wrap">
             <button className="btn accent lg" onClick={demo.start} disabled={demo.busy}>
-              {demo.busy ? <><span className="spinner" /> Preparing your workspace…</> : 'Open a live demo workspace'}
+              {demo.busy ? <><span className="spinner" /> Preparing your workspace…</> : 'Open your workspace'}
             </button>
           </div>
           {demo.error && <div className="error">{demo.error}</div>}
           <div className="row wrap" style={{ gap: 8 }}>
             <span className="pill accent">Private workspace</span>
-            <span className="pill tone-sky">Synthetic retailer data</span>
-            <span className="pill tone-teal">Deleted after 24 h</span>
+            <span className="pill tone-sky">Sample retail data included</span>
+            <span className="pill tone-teal">No sign-up needed</span>
           </div>
         </div>
         <div className="card pad" style={{ alignSelf: 'center', boxShadow: 'var(--shadow)' }}>
@@ -145,7 +145,7 @@ export default function Landing() {
 
       <footer style={{ borderTop: '1px solid var(--line)' }}>
         <div className="row wrap" style={{ maxWidth: 1180, margin: '0 auto', padding: '20px 24px', gap: 16 }}>
-          <Logo size={20} /><span className="small muted">Data Sentinel · synthetic demo data only · built with FastAPI, scikit-learn and React</span>
+          <Logo size={20} /><span className="small muted">Data Sentinel · sample data is synthetic · built with FastAPI, scikit-learn and React</span>
         </div>
       </footer>
     </div>

@@ -38,7 +38,8 @@ is_sqlite = config.DATABASE_URL.startswith("sqlite")
 if is_sqlite:
     Path(config.DATABASE_URL.removeprefix("sqlite:///")).parent.mkdir(parents=True, exist_ok=True)
 engine = create_engine(config.DATABASE_URL, json_serializer=dumps, pool_pre_ping=True,
-                       connect_args={"check_same_thread": False, "timeout": 30} if is_sqlite else {})
+                       # Poolers (Neon/PgBouncer) can't keep per-connection prepared statements.
+                       connect_args={"check_same_thread": False, "timeout": 30} if is_sqlite else {"prepare_threshold": None})
 if is_sqlite:
     @event.listens_for(engine, "connect")
     def _pragmas(conn, _):

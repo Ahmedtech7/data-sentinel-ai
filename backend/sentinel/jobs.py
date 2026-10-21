@@ -7,6 +7,7 @@ app instances; move to a real queue (RQ/Celery/Arq) before scaling out.
 import logging
 import traceback
 from concurrent.futures import ThreadPoolExecutor
+from datetime import UTC, timedelta
 
 from sqlalchemy import select
 
@@ -48,6 +49,16 @@ def _execute(run_id: int) -> None:
 
 
 def resume_pending() -> None:
+    if config.SYNC_JOBS:
+        # Inline runs belong to a request; one still "running" long after it started was cut off.
+        with SessionLocal() as db:
+            stale = utcnow() - timedelta(minutes=15)
+            for run in db.scalars(select(AnalysisRun).where(AnalysisRun.status.in_(("queued", "running")))):
+                started = run.created_at if run.created_at.tzinfo else run.created_at.replace(tzinfo=UTC)
+                if started < stale:
+                    run.status, run.error, run.finished_at = "failed", "Interrupted before it finished.", utcnow()
+            db.commit()
+        return
     with SessionLocal() as db:
         ids = db.scalars(select(AnalysisRun.id).where(AnalysisRun.status.in_(("queued", "running")))
                          .order_by(AnalysisRun.id)).all()

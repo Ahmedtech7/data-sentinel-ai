@@ -80,7 +80,8 @@ class RateLimiter:
         self.limit, self.seconds, self.hits = limit, seconds, defaultdict(deque)
 
     def __call__(self, request: Request):
-        key = request.client.host if request.client else "?"
+        fwd = request.headers.get("x-forwarded-for") if config.TRUST_PROXY else None
+        key = fwd.split(",")[0].strip() if fwd else (request.client.host if request.client else "?")
         q, now = self.hits[key], time.monotonic()
         while q and now - q[0] > self.seconds:
             q.popleft()

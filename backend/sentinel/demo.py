@@ -1,4 +1,4 @@
-"""Disposable demo workspaces: anyone can explore the product without a shared password."""
+"""Instant workspaces: anyone can use the product without a sign-up or shared password; kept for 24 h."""
 import secrets
 from datetime import timedelta
 
@@ -43,19 +43,19 @@ def demo_files() -> tuple[bytes, bytes]:
 
 def create_demo_workspace(db: Session) -> User:
     if not config.DEMO_ENABLED:
-        raise HTTPException(404, "Demo workspaces are disabled.")
+        raise HTTPException(404, "New workspaces are disabled.")
     cutoff = utcnow() - timedelta(hours=config.DEMO_TTL_HOURS)
     for org in db.scalars(select(Organization).where(Organization.is_demo.is_(True),
                                                      Organization.created_at < cutoff)):
         db.delete(org)
     db.flush()
     if db.scalar(select(func.count()).where(Organization.is_demo.is_(True))) >= config.DEMO_MAX_WORKSPACES:
-        raise HTTPException(429, "The demo is busy right now. Please try again later.")
+        raise HTTPException(429, "Too many workspaces are open right now. Please try again later.")
     tag = secrets.token_hex(3)
-    org = Organization(name=f"Demo workspace {tag}", is_demo=True)
+    org = Organization(name=f"Workspace {tag}", is_demo=True)
     db.add(org)
     db.flush()
-    user = User(org_id=org.id, email=f"guest-{tag}-{secrets.token_hex(4)}@demo.invalid", name="Guest analyst",
+    user = User(org_id=org.id, email=f"guest-{tag}-{secrets.token_hex(4)}@workspace.invalid", name="Analyst",
                 password_hash=None, role="admin")
     db.add(user)
     db.flush()
