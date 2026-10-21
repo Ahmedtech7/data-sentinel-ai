@@ -3,7 +3,6 @@ import { BrowserRouter, Navigate, NavLink, Outlet, Route, Routes, useLocation, u
 import { api, useApi, type Me } from './api'
 import { Loading, Logo } from './ui'
 import Landing from './pages/Landing'
-import { Login, Register } from './pages/Auth'
 
 const Overview = lazy(() => import('./pages/Overview'))
 const Datasets = lazy(() => import('./pages/Datasets'))
@@ -53,7 +52,7 @@ function Shell() {
   const active = useApi<{ id: number }[]>(me ? `/api/incidents?status=active&_=${loc.pathname}` : null)
   useEffect(() => setOpen(false), [loc.pathname])
   if (!ready) return <div className="main"><Loading /></div>
-  if (!me) return <Navigate to="/login" state={{ from: loc.pathname }} replace />
+  if (!me) return <Navigate to="/" replace />
   return (
     <div className="shell">
       <aside className={`side ${open ? 'open' : ''}`} aria-label="Main navigation">
@@ -73,7 +72,7 @@ function Shell() {
             <div className="ellipsis"><b>{me.name}</b></div>
             <div className="muted ellipsis">{me.organization.name} · {me.role}</div>
           </div>
-          <button className="btn sm" onClick={async () => { await signOut(); nav('/') }}>Sign out</button>
+          <button className="btn sm" title="Leaves this temporary workspace; it cannot be reopened" onClick={async () => { await signOut(); nav('/') }}>Exit workspace</button>
         </div>
       </aside>
       <div style={{ minWidth: 0 }}>
@@ -96,8 +95,6 @@ export default function App() {
       <AuthProvider>
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
           <Route path="/app" element={<Shell />}>
             <Route index element={<Overview />} />
             <Route path="datasets" element={<Datasets />} />

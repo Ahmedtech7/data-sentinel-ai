@@ -58,12 +58,13 @@ export default function Landing() {
 
   return (
     <div style={{ minHeight: '100%' }}>
+      <div className="hero-bg">
       <header className="row" style={{ maxWidth: 1180, margin: '0 auto', padding: '18px 24px' }}>
         <Link to="/" className="brand" style={{ padding: 0 }}><Logo /><b>DATA SENTINEL</b></Link>
         <nav className="row right" style={{ gap: 6 }}>
           <a className="btn ghost sm" href="#how">How it works</a>
           <a className="btn ghost sm" href="#evidence">Evidence</a>
-          {me ? <Link className="btn primary sm" to="/app">Open workspace</Link> : <Link className="btn sm" to="/login">Sign in</Link>}
+          {me && <Link className="btn primary sm" to="/app">Open workspace</Link>}
         </nav>
       </header>
 
@@ -71,7 +72,7 @@ export default function Landing() {
         <div className="stack" style={{ alignContent: 'center', gap: 22 }}>
           <span className="eyebrow">Data quality monitoring for business feeds</span>
           <h1 className="display" style={{ fontSize: 'clamp(44px, 6vw, 76px)' }}>
-            Bad data doesn’t announce itself. <em style={{ color: 'var(--ink-2)' }}>Sentinel does.</em>
+            Bad data doesn’t announce itself. <em className="grad-text">Sentinel does.</em>
           </h1>
           <p className="ink2" style={{ fontSize: 17, maxWidth: 56 + 'ch' }}>
             Upload a CSV feed. Data Sentinel learns what normal looks like, checks every new version against it, and
@@ -81,10 +82,13 @@ export default function Landing() {
             <button className="btn accent lg" onClick={demo.start} disabled={demo.busy}>
               {demo.busy ? <><span className="spinner" /> Preparing your workspace…</> : 'Open a live demo workspace'}
             </button>
-            <Link className="btn lg" to="/register">Create an account</Link>
           </div>
           {demo.error && <div className="error">{demo.error}</div>}
-          <p className="small muted">The demo gives you a private, temporary workspace with a synthetic retailer’s order feed. No sign-up, deleted after 24 hours.</p>
+          <div className="row wrap" style={{ gap: 8 }}>
+            <span className="pill accent">Private workspace</span>
+            <span className="pill tone-sky">Synthetic retailer data</span>
+            <span className="pill tone-teal">Deleted after 24 h</span>
+          </div>
         </div>
         <div className="card pad" style={{ alignSelf: 'center', boxShadow: 'var(--shadow)' }}>
           <div className="row between" style={{ marginBottom: 10 }}>
@@ -98,10 +102,11 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      </div>
 
       <section id="how" style={{ borderTop: '1px solid var(--line)', background: 'var(--surface)' }}>
         <div style={{ maxWidth: 1180, margin: '0 auto', padding: '56px 24px' }} className="stack">
-          <span className="eyebrow">Three layers, each where it belongs</span>
+          <span className="eyebrow" style={{ color: 'var(--accent)' }}>Three layers, each where it belongs</span>
           <h2 className="display" style={{ fontSize: 40, maxWidth: '22ch' }}>Rules where rules are exact. Models where they are not.</h2>
           <div className="grid g3" style={{ marginTop: 12 }}>
             {[
@@ -109,8 +114,8 @@ export default function Landing() {
               ['02 · Records', 'Context model', 'Gradient-boosted models learn what each value should be for its context — this SKU, this channel, this region — and how much it normally varies. A $3,404 line for a $34 product stands out even though $3,404 is a normal price elsewhere.'],
               ['03 · Feed', 'Health model', 'Every segment-day is scored on volume vs. the same weekday, completeness, duplication, ingestion delay, and the level of each numeric column adjusted for that day’s product mix by the context model, plus a Poisson volume test.'],
             ].map(([k, t, d]) => (
-              <div key={k} className="card pad stack-sm">
-                <span className="eyebrow">{k}</span>
+              <div key={k} className="card pad stack-sm layer">
+                <div className="row"><span className="chip">{k.slice(0, 2)}</span><span className="eyebrow">{k.slice(5)}</span></div>
                 <h3 style={{ fontSize: 20 }}>{t}</h3>
                 <p className="ink2">{d}</p>
               </div>
@@ -120,7 +125,7 @@ export default function Landing() {
       </section>
 
       <section id="evidence" style={{ maxWidth: 1180, margin: '0 auto', padding: '56px 24px' }} className="stack">
-        <span className="eyebrow">Measured, not claimed</span>
+        <span className="eyebrow" style={{ color: 'var(--accent)' }}>Measured, not claimed</span>
         <h2 className="display" style={{ fontSize: 40, maxWidth: '24ch' }}>Every number below comes from held-out test data.</h2>
         <p className="ink2" style={{ maxWidth: '70ch' }}>
           Models and thresholds were chosen on validation streams only, then scored once on five independent synthetic companies with labelled, injected faults.

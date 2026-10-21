@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useState } from 'react'
 import { api, useApi, type Member, type Role } from '../api'
 import { useAuth } from '../App'
 import { ErrorBox, Loading } from '../ui'
@@ -14,18 +14,6 @@ export default function Team() {
   const list = useApi<Member[]>('/api/auth/members')
   const [error, setError] = useState<string | null>(null)
   const isAdmin = me?.role === 'admin'
-  const add = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const form = e.currentTarget
-    setError(null)
-    try {
-      await api('/api/auth/members', { method: 'POST', json: Object.fromEntries(new FormData(form)) })
-      form.reset()
-      list.reload()
-    } catch (err) {
-      setError((err as Error).message)
-    }
-  }
   const setRole = async (id: number, role: string) => {
     try {
       await api(`/api/auth/members/${id}?role=${role}`, { method: 'PATCH' })
@@ -53,19 +41,7 @@ export default function Team() {
         <div className="card pad stack">
           <h3>Roles</h3>
           {(Object.keys(ROLE_HELP) as Role[]).map((r) => <div key={r} className="small"><b>{r}</b> · <span className="ink2">{ROLE_HELP[r]}</span></div>)}
-          {isAdmin && !me?.organization.is_demo && (
-            <form className="stack-sm" onSubmit={add}>
-              <hr className="divider" />
-              <h3>Add a member</h3>
-              <input name="name" placeholder="Name" required maxLength={120} aria-label="Name" />
-              <input name="email" type="email" placeholder="Email" required aria-label="Email" />
-              <input name="password" type="password" placeholder="Temporary password (10+ chars)" minLength={10} required aria-label="Temporary password" autoComplete="new-password" />
-              <select name="role" defaultValue="analyst" aria-label="Role"><option>viewer</option><option>analyst</option><option>admin</option></select>
-              <button className="btn primary">Add member</button>
-              <p className="small muted">Share the temporary password through a secure channel. Email invitations are not implemented.</p>
-            </form>
-          )}
-          {me?.organization.is_demo && <p className="small muted">Demo workspaces cannot add members.</p>}
+          <p className="small muted">Workspaces are private and temporary; there is no sign-in or sign-up.</p>
           {error && <div className="error">{error}</div>}
         </div>
       </div>

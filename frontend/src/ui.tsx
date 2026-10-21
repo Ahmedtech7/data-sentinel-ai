@@ -42,9 +42,10 @@ export const fmt = {
 export function Logo({ size = 26 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
-      <rect width="32" height="32" rx="7" fill="var(--ink)" />
-      <path d="M7 16h5l2.5-6 3 12 2.5-6H25" fill="none" stroke="var(--bg)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="25" cy="16" r="2.2" fill="var(--serious)" />
+      <defs><linearGradient id="ds-logo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#4f46e5" /><stop offset=".6" stopColor="#0ea5e9" /><stop offset="1" stopColor="#14b8a6" /></linearGradient></defs>
+      <rect width="32" height="32" rx="8" fill="url(#ds-logo)" />
+      <path d="M7 16h5l2.5-6 3 12 2.5-6H25" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="25" cy="16" r="2.2" fill="#fde68a" />
     </svg>
   )
 }

@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test'
 
-test('landing page shows measured model results from the API', async ({ page }) => {
+test('landing page shows measured model results and offers only the demo entry', async ({ page }) => {
   await page.goto('/')
+  await expect(page.getByRole('link', { name: /sign in|create an account/i })).toHaveCount(0)
   await expect(page.getByRole('heading', { name: /Bad data doesn’t announce itself/ })).toBeVisible()
   await expect(page.getByText('Records · average precision')).toBeVisible()
   await expect(page.getByText(/false flags on [\d,]+ clean rows/)).toBeVisible()
@@ -32,18 +33,8 @@ test('fault lab: injected faults are scored against ground truth', async ({ page
   const row = page.getByRole('row', { name: /duplicates/ })
   await expect(row.getByText('100%')).toBeVisible()
 })
-})
 
-test('register, upload a CSV, see the baseline analysed', async ({ page }) => {
-  const email = `e2e-${Date.now()}@example.com`
-  await page.goto('/register')
-  await page.getByLabel('Your name').fill('E2E Tester')
-  await page.getByLabel('Organization').fill('E2E Corp')
-  await page.getByLabel('Work email').fill(email)
-  await page.getByLabel('Password').fill('e2e-password-123')
-  await page.getByRole('button', { name: 'Create workspace' }).click()
-  await expect(page.getByRole('heading', { name: 'Watchtower' })).toBeVisible()
-
+test('upload a new CSV dataset and see its baseline analysed', async ({ page }) => {
   const header = 'order_id,created_at,store,amount\n'
   const rows = Array.from({ length: 400 }, (_, i) =>
     `A${i},2026-03-${String(1 + (i % 28)).padStart(2, '0')}T10:00:00,S${i % 3},${(20 + (i % 13) * 1.5).toFixed(2)}`)
@@ -55,11 +46,5 @@ test('register, upload a CSV, see the baseline analysed', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'E2E sales' })).toBeVisible()
   await expect(page.getByText('Baseline version.')).toBeVisible()
   await expect(page.getByText('400', { exact: true })).toBeVisible()
-
-  await page.getByRole('button', { name: 'Sign out' }).click()
-  await page.goto('/login')
-  await page.getByLabel('Email').fill(email)
-  await page.getByLabel('Password').fill('e2e-password-123')
-  await page.getByRole('button', { name: 'Sign in' }).click()
-  await expect(page.getByRole('heading', { name: 'Watchtower' })).toBeVisible()
+})
 })

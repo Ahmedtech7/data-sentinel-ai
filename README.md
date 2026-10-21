@@ -38,8 +38,8 @@ It is built to be honest about what it knows. Anomalous is not the same as wrong
 | **Incidents** | One incident per root cause. Recurrences in later versions are added to the open incident; segment-level symptoms of a record-level cause are folded into it. Status, severity, assignee, comments, timeline. |
 | **Fault Lab** | Corrupt a copy of your latest version on purpose (outage, unit bug, replayed load, late feed, silent drift, schema change), with a recorded seed, and get a scorecard of what was caught, by which layer, and what was missed. |
 | **Model evidence** | The full offline evaluation in the app: every candidate detector, PR curves, recall per fault type, thresholds, runtime. |
-| **Demo workspaces** | One click creates a private, temporary workspace with a synthetic retailer and a month containing four realistic incidents. No shared demo password exists. |
-| **Teams** | Workspaces with `viewer` / `analyst` / `admin` roles; tenants are isolated. |
+| **Demo workspaces** | One click creates a private, temporary workspace (deleted after 24 h) with a synthetic retailer and a month containing four realistic incidents. There is no sign-in or sign-up; this is the only way in. |
+| **Isolation & roles** | Every workspace is a separate tenant; `viewer` / `analyst` / `admin` roles are enforced server-side. |
 
 <table>
 <tr><td><img src="docs/screenshots/overview.png" alt="Overview"/></td><td><img src="docs/screenshots/incident.png" alt="Incident with evidence"/></td></tr>
@@ -121,7 +121,7 @@ Recall **100%** on sign flips, unparseable values, duplicate loads, missing keys
 ```
 
 - **Backend**: FastAPI, SQLAlchemy 2, Alembic, pandas, scikit-learn, SciPy. Python 3.13.
-- **Frontend**: React 19, TypeScript, Vite, React Router, Recharts. No UI kit; a small token-based design system with light and dark modes.
+- **Frontend**: React 19, TypeScript, Vite, React Router, Recharts. No UI kit; a small token-based light design system (layered whites, an indigo-to-teal brand gradient, status colours reserved for severity).
 - **One deployable unit**: the API serves the built SPA, which removes a CORS surface and needs only one free-tier service.
 - **Models are per dataset**, trained on that dataset's baseline and stored versioned (`ENGINE_VERSION`). When the engine changes, older models are retrained from the baseline on the next analysis.
 
@@ -137,7 +137,7 @@ python3 -m venv .venv && .venv/bin/pip install -r backend/requirements-dev.txt
 cd backend && ../.venv/bin/uvicorn sentinel.main:app --port 8765
 ```
 
-Open http://localhost:8765 and click **Open a live demo workspace**. Migrations run on startup; SQLite is used unless `DATABASE_URL` is set. For frontend development with hot reload, also run `cd frontend && npm run dev` (it proxies `/api` to port 8765).
+Open http://localhost:8765 and click **Open a live demo workspace** (the only way in). Migrations run on startup; SQLite is used unless `DATABASE_URL` is set. For frontend development with hot reload, also run `cd frontend && npm run dev` (it proxies `/api` to port 8765).
 
 With Docker (app + Postgres):
 
@@ -184,7 +184,8 @@ Step by step: [docs/deployment.md](docs/deployment.md).
 - Authorization: every query is scoped to the caller's organization. Cross-tenant ids return 404 (no existence leak). Roles are checked server-side.
 - Uploads: size cap before parsing, binary/encoding rejection, row and column caps, header sanitisation. Stored gzip-compressed in the database, never on a public path. Formula rules use a whitelist AST parser.
 - Headers: CSP (`script-src 'self'`), `X-Frame-Options: DENY`, `nosniff`, strict referrer.
-- Abuse limits: login/register 10/min/IP; demo workspaces 5/hour/IP, a global cap, and a 24 h TTL.
+- Abuse limits: demo workspaces 5/hour/IP, a global cap, and a 24 h TTL.
+- The web app has no sign-in or sign-up. The API still has password-based `register`/`login` endpoints (rate-limited 10/min/IP) for programmatic clients and tests.
 - Model artifacts are pickled with joblib and only ever loaded from blobs the service wrote itself.
 - No secrets in the repository; `SECRET_KEY` is required in production.
 
@@ -194,7 +195,7 @@ Step by step: [docs/deployment.md](docs/deployment.md).
 - **Single-process worker.** Analyses run in an in-process thread with DB-persisted state that resumes after a restart. Running more than one instance would need a real queue (RQ/Celery). The rate limiter is also per process.
 - **Small segments**: see volume-drop recall by size above.
 - **Late arrival** in feeds that already arrive in nightly batches is detected only 70% of the time.
-- **Batch, not streaming**: versions are uploaded as CSV. Database/warehouse connectors and scheduled pulls are natural next steps, along with email/Slack alerts and invitation emails (members are added by an admin with a temporary password).
+- **Batch, not streaming**: versions are uploaded as CSV. Database/warehouse connectors and scheduled pulls are natural next steps, along with email/Slack alerts and real accounts (with SSO) if it is run for a team.
 - **Free hosting**: cold starts of about a minute after 15 minutes idle, and 0.1 CPU makes baseline training several times slower than the ~2 s measured for 20k rows on a laptop (demo workspaces reuse a cached model).
 
 ## Project layout
