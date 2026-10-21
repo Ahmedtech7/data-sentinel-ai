@@ -164,18 +164,21 @@ CI (`.github/workflows/ci.yml`) runs lint, the test suite on **both SQLite and P
 
 ## Deployment
 
-The project is configured for a **$0/month** setup: a **Render free web service** (Docker, `render.yaml`) plus **Neon free Postgres**. Trade-offs, checked October 2026:
+**Live: https://data-sentinel-ai.vercel.app** (the browser E2E suite passes against it).
 
-| Option | Cost | Why / why not |
-|---|---|---|
-| **Render free web service** | $0 | Docker support; 512 MB RAM, 0.1 CPU; spins down after 15 min idle (~1 min cold start); 750 h/month per workspace |
-| **Neon free Postgres** | $0 | 1 GB per project, no expiry; compute suspends after 5 min idle |
-| Render free Postgres | $0 | Rejected: expires after 30 days |
-| Hugging Face Docker Space | paid plan | Docker/Gradio Spaces now require PRO |
-| Fly.io | ~$3/mo | No free tier for new organizations |
-| Render Starter | $7/mo | The upgrade path: no cold starts, 0.5 CPU |
+Hosting is **Vercel (Hobby) + Neon Postgres (free plan via the Vercel Marketplace)**, $0/month:
 
-Step by step: [docs/deployment.md](docs/deployment.md).
+- `app.py` is the Vercel entrypoint; `vercel.json` builds the React app and gives the function up to 300 s.
+- On Vercel (`VERCEL=1`) the app switches to serverless mode automatically: analyses run inside the request instead of a background thread, uploads are capped at 4 MB (Vercel's request-body limit is 4.5 MB), and rate limits use the forwarded client IP.
+- Environment: `DATABASE_URL` (added by the Neon integration), `SECRET_KEY`, `SENTINEL_ENV=production`.
+- Trade-offs: a cold start adds a few seconds to the first request; creating a workspace takes about 15 s because the baseline is trained in the request.
+
+```bash
+vercel deploy --prod
+cd e2e && BASE_URL=https://data-sentinel-ai.vercel.app npx playwright test
+```
+
+The same image also runs anywhere Docker does (`Dockerfile`, `docker-compose.yml`, and a `render.yaml` blueprint for Render). See [docs/deployment.md](docs/deployment.md).
 
 ## Security
 

@@ -1,4 +1,15 @@
-# Deployment (Render free + Neon free, $0/month)
+# Deployment
+
+## Vercel + Neon (current, live at https://data-sentinel-ai.vercel.app)
+
+1. `vercel link` the repository root (the entrypoint is `app.py`; `vercel.json` builds the frontend).
+2. Add Neon from the Vercel Marketplace on the free plan and connect it to the project; it sets `DATABASE_URL`.
+3. Add `SECRET_KEY` (random, sensitive) and `SENTINEL_ENV=production` for Production.
+4. `vercel deploy --prod`, then run the E2E suite with `BASE_URL` set to the production URL.
+
+Migrations run automatically on cold start. Serverless mode is enabled by `VERCEL=1`, which Vercel sets.
+
+## Alternative: Render free + Neon free
 
 1. **Database**: create a free project at [neon.com](https://neon.com) and copy the connection string (`postgresql://…?sslmode=require`).
 2. **App**: in [Render](https://render.com), choose **New → Blueprint**, connect this GitHub repository, and Render reads `render.yaml` (Docker, free plan, health check `/api/health`, generated `SECRET_KEY`).

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-test('landing page shows measured model results and offers only the demo entry', async ({ page }) => {
+test('landing page shows measured model results and the workspace entry only', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('link', { name: /sign in|create an account/i })).toHaveCount(0)
   await expect(page.getByRole('heading', { name: /Bad data doesn’t announce itself/ })).toBeVisible()
